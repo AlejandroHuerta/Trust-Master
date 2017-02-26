@@ -17,16 +17,27 @@ RESULTS = "results"
 UNIT_RESULTS = "unit_results"
 ITEMS_OBTAINED = "items_obtained"
 DISCONNECTED = "disconnected"
+ENERGY_RECOVERY = "energy_recovery"
+LAPIS_RESTORE = "lapis_restore"
+UNIT_DATA = "unit_data"
+DAILY_QUEST = "daily_quest"
+FRIEND_REQUEST = "friend_request"
 
 TIMEOUT = 20
 FIGHTING_TIMEOUT = 120
+ENERGY_WAIT = 60 * 5 * 10
 
-MAX_RETRY = 4
+RETRY_TIMEOUT = 5
+MAX_RETRY = 12
 
 retries = 0
 
+use_lapis = false
+
 function main()
   state = QUEST_LIST
+
+  build_ui()
 
   while(true) do
     if (state == QUEST_LIST) then
@@ -59,6 +70,14 @@ function main()
   end
 end
 
+function build_ui()
+  dialogInit()
+
+  addCheckBox("use_lapis", "Lapis Refill", false)
+
+  dialogShow("Trust Master")
+end
+
 function unknown()
   if (retries > MAX_RETRY) then
     return EXIT
@@ -68,24 +87,34 @@ function unknown()
 
   if (exists("disconnected/disconnected.png")) then
     found_state = DISCONNECTED
-  elseif (exists("results/results.png")) then
+  elseif (exists("results/results.png", RETRY_TIMEOUT)) then
     found_state = RESULTS
-  elseif (exists("battle/battle.png")) then
+  elseif (exists("battle/battle.png", RETRY_TIMEOUT)) then
     found_state = BATTLE
-  elseif (exists("companion_list/companion_list.png")) then
+  elseif (exists("energy_recovery/energy_recovery.png", RETRY_TIMEOUT)) then
+    found_state = ENERGY_RECOVERY
+  elseif (exists("lapis_restore/lapis_restore.png", RETRY_TIMEOUT)) then
+    found_state = LAPIS_RESTORE
+  elseif (exists("unit_data/unit_data.png", RETRY_TIMEOUT)) then
+    found_state = UNIT_DATA
+  elseif (exists("companion_list/companion_list.png", RETRY_TIMEOUT)) then
     found_state = COMPANION_LIST
-  elseif (exists("depart_screen/depart_screen.png")) then
+  elseif (exists("depart_screen/depart_screen.png", RETRY_TIMEOUT)) then
     found_state = DEPART_SCREEN
-  elseif (exists("fighting/fighting.png")) then
+  elseif (exists("fighting/fighting.png", RETRY_TIMEOUT)) then
     found_state = FIGHTING
-  elseif (exists("items_obtained/items_obtained.png")) then
+  elseif (exists("items_obtained/items_obtained.png", RETRY_TIMEOUT)) then
     found_state = ITEMS_OBTAINED
-  elseif (exists("mission_list/mission_list.png")) then
+  elseif (exists("mission_list/mission_list.png", RETRY_TIMEOUT)) then
     found_state = MISSION_LIST
-  elseif (exists("quest_list/quest_list.png")) then
+  elseif (exists("quest_list/quest_list.png", RETRY_TIMEOUT)) then
     found_state = QUEST_LIST
-  elseif (exists("unit_results/unit_results.png")) then
+  elseif (exists("unit_results/unit_results.png", RETRY_TIMEOUT)) then
     found_state = UNIT_RESULTS
+  elseif (exists("daily_quest/daily_quest.png", RETRY_TIMEOUT)) then
+    found_state = DAILY_QUEST
+  elseif (exists("friend_request/friend_request.png", RETRY_TIMEOUT)) then
+    found_state = FRIEND_REQUEST
   else
     retries = retries + 1
     return UNKNOWN
@@ -94,6 +123,56 @@ function unknown()
   retries = 0
 
   return found_state
+end
+
+function daily_quest()
+  if (existsClick("daily_quest/close.png", TIMEOUT)) then
+    return QUEST_LIST
+  else
+    return UNKNOWN
+  end
+end
+
+function friend_request()
+  if (existsClick("friend_request/dont_request.png", TIMEOUT)) then
+    return QUEST_LIST
+  else
+    return UNKNOWN
+  end
+end
+
+function unit_data()
+  if (existsClick("unit_data/ok.png", TIMEOUT)) then
+    return UNKNOWN -- Update
+  else
+    return UNKNOWN
+  end
+end
+
+function lapis_restore()
+  if (existsClick("lapis_restore/yes.png", TIMEOUT)) then
+    return QUEST_LIST
+  else
+    return UNKNOWN
+  end
+end
+
+function energy_recovery()
+  if (use_lapis) then
+    if (existsClick("energy_recovery/lapis.png", TIMEOUT)) then
+      return LAPIS_RESTORE
+    else
+      return UNKNOWN
+    end
+  end
+
+  wait(ENERGY_WAIT)
+
+  if (existsClick("energy_recovery/back.png", TIMEOUT)) then
+    return QUEST_LIST
+  else
+    return UNKNOWN
+  end
 end
 
 function quest_list()
