@@ -115,7 +115,7 @@ function unknown()
   return found_state
 end
 
-function daily_quest() then
+function daily_quest()
   if (existsClick("daily_quest/close.png", TIMEOUT)) then
     return QUEST_LIST
   else
@@ -123,7 +123,7 @@ function daily_quest() then
   end
 end
 
-function friend_request() then
+function friend_request()
   if (existsClick("friend_request/dont_request.png", TIMEOUT)) then
     return QUEST_LIST
   else
