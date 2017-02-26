@@ -41,7 +41,18 @@ function main()
     setBrightness(0)
   end
 
+  if (slow_scan) then
+    setScanInterval(4)
+  end
+
   while(true) do
+    if (print_state) then
+      toast(state)
+      print(state)
+    end
+
+    Settings:set("MinSimilarity", 0.8)
+
     if (state == QUEST_LIST) then
       state = quest_list()
     elseif (state == MISSION_LIST) then
@@ -88,9 +99,15 @@ function build_ui()
   addCheckBox("use_lapis", "Lapis Refill", false)
 
   newRow()
-  addTextView("Pro features")
+  addTextView("Pro Features")
   newRow()
   addCheckBox("dim_screen", "Dim Screen", false)
+  addCheckBox("slow_scan", "Save Battery", false)
+
+  newRow()
+  addTextView("Debugging")
+  newRow()
+  addCheckBox("print_state", "Show State Changes", false)
 
   dialogShow("Trust Master")
 end
@@ -101,6 +118,8 @@ function unknown()
   end
 
   local found_state
+
+  Settings:set("MinSimilarity", 0.9)
 
   if (exists("disconnected/disconnected.png")) then
     found_state = DISCONNECTED
