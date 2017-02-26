@@ -37,6 +37,8 @@ use_lapis = false
 function main()
   state = QUEST_LIST
 
+  build_ui()
+
   while(true) do
     if (state == QUEST_LIST) then
       state = quest_list()
@@ -66,6 +68,14 @@ function main()
 
     wait(1)
   end
+end
+
+function build_ui()
+  dialogInit()
+
+  addCheckBox("use_lapis", "Lapis Refill", false)
+
+  dialogShow("Trust Master")
 end
 
 function unknown()
