@@ -1,4 +1,4 @@
-
+-- v0.2.1
 -- === Setup === --
 
 Settings:setCompareDimension(true, 1080)
@@ -62,6 +62,16 @@ function main()
       state = unknown()
     elseif (state == DISCONNECTED) then
       state = disconnected()
+    elseif (state == ENERGY_RECOVERY) then
+      state = energy_recovery()
+    elseif (state == LAPIS_RESTORE) then
+      state = lapis_restore()
+    elseif (state == UNIT_DATA) then
+      state = unit_data()
+    elseif (state == DAILY_QUEST) then
+      state = daily_quest()
+    elseif (state == FRIEND_REQUEST) then
+      state = friend_request()
     else
       break
     end
