@@ -32,12 +32,14 @@ MAX_RETRY = 12
 
 retries = 0
 
-use_lapis = false
-
 function main()
   state = QUEST_LIST
 
   build_ui()
+
+  if (dim_screen) then
+    setBrightness(0)
+  end
 
   while(true) do
     if (state == QUEST_LIST) then
@@ -84,6 +86,11 @@ function build_ui()
   dialogInit()
 
   addCheckBox("use_lapis", "Lapis Refill", false)
+
+  newRow()
+  addTextView("Pro features")
+  newRow()
+  addCheckBox("dim_screen", "Dim Screen", false)
 
   dialogShow("Trust Master")
 end
